@@ -38,10 +38,14 @@
       </div>
 
       <!-- Image -->
+       <div class="mb-3">
+        Orignal Listing Image<br>
+        <img src="<%=listing.image.url%>">
+       </div>
       <div class="mb-3">
         <label for="image" class="form-label">Upload New Image</label>
         <input 
-          name="listing[image]" 
+          name="image" 
           type="file" 
           class="form-control"
         >
