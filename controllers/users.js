@@ -1,43 +1,49 @@
-const User=require("../models/user");
+const User = require("../models/user");
 
-module.exports.renderSignupForm=(req,res)=>{
-    res.render("users/signup.ejs");
-}
-module.exports.signup=async(req,res)=>{
-        try{
-            let{username,email,password}=req.body;
-            const newUser=new user({email,username});
-            const registerUser=await user.register(newUser,password);
-            console.log(registerUser);
-            req.login(registerUser,(err)=>{
-                if(err){
-                    return next(err);
-                }
-                req.flash("success","Welcome to Wanderlust!");
-                res.redirect("/listing");
-            });
-        }catch(e){
-            req.flash("error",e.message);
-            res.redirect("/signup");
-        }
-    }
+// Render signup form
+module.exports.renderSignupForm = (req, res) => {
+  res.render("users/signup.ejs");
+};
 
-module.exports.renderLoginForm=(req,res)=>{
-    res.render("users/login.ejs");
-}
+// Signup logic
+module.exports.signup = async (req, res, next) => {
+  try {
+    const { username, email, password } = req.body;
 
-module.exports.login=async(req,res)=>{
-        req.flash("success","Welcome  back to Wanderlust!");
-        let redirectUrl=res.locals.redirectUrl ||"/listing";
-        res.redirect(redirectUrl);
-    }
+    const newUser = new User({ email, username });
+    const registeredUser = await User.register(newUser, password);
 
-module.exports.logout=(req,res,next)=>{
-    req.logout((err)=>{
-        if(err){
-            next(err);
-        }
-        req.flash("success","you are logged out!");
-        res.redirect("/listing");
-    })
-}
+    console.log(registeredUser);
+
+    req.login(registeredUser, (err) => {
+      if (err) return next(err);
+      req.flash("success", "Welcome to Wanderlust!");
+      res.redirect("/listing");
+    });
+
+  } catch (e) {
+    req.flash("error", e.message);
+    res.redirect("/signup");
+  }
+};
+
+// Render login form
+module.exports.renderLoginForm = (req, res) => {
+  res.render("users/login.ejs");
+};
+
+// Login success
+module.exports.login = (req, res) => {
+  req.flash("success", "Welcome back to Wanderlust!");
+  const redirectUrl = res.locals.redirectUrl || "/listing";
+  res.redirect(redirectUrl);
+};
+
+// Logout
+module.exports.logout = (req, res, next) => {
+  req.logout((err) => {
+    if (err) return next(err);
+    req.flash("success", "You are logged out!");
+    res.redirect("/listing");
+  });
+};
